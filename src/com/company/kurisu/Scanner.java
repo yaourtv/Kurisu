@@ -33,19 +33,19 @@ public class Scanner {
     static {
         keywords = new HashMap<>();
         keywords.put("and", AND);
-        keywords.put("Class", CLASS);
+        keywords.put("Class", CLASS); //
         keywords.put("else", ELSE);
-        keywords.put("False", FALSE);
+        keywords.put("False", FALSE); //
         keywords.put("for", FOR);
-        keywords.put("Def", DEF);
+        keywords.put("Def", DEF); //
         keywords.put("if", IF);
-        keywords.put("Null", NIL);
+        keywords.put("Null", NIL); //
         keywords.put("or", OR);
         keywords.put("print", PRINT);
         keywords.put("return", RETURN);
         keywords.put("super", SUPER);
-        keywords.put("this", THIS);
-        keywords.put("True", TRUE);
+        keywords.put("self", THIS); //
+        keywords.put("True", TRUE); //
         keywords.put("var", VAR);
         keywords.put("while", WHILE);
     }
@@ -73,6 +73,8 @@ public class Scanner {
             case '/':
                 if (match('/')) {
                     while (peek() != '\n' && !isAtEnd()) advance();
+                } else if (match('*')) {
+                    commentBlock(); break;
                 } else {
                     addToken(SLASH);
                 }
@@ -150,6 +152,25 @@ public class Scanner {
         addToken(STRING, value);
     }
 
+    // TODO: Recursive comment blocks
+    private void commentBlock() {
+        while ((peek() != '*' || peekNext() != '/') && !isAtEnd()) {
+            if (peek() == '\n') line++;
+            advance();
+        }
+
+        // Unterminated string
+        if (isAtEnd()) {
+            Kurisu.error(line, "Unterminated comment block.");
+            return;
+        }
+
+        // Closing *
+        advance();
+        // Closing /
+        advance();
+    }
+
     private boolean match(char expected) {
         if (isAtEnd()) return false;
         if (source.charAt(current) != expected) return false;
@@ -165,7 +186,7 @@ public class Scanner {
 
     private char peekNext() {
         if (current + 1 >= source.length()) return '\0';
-        return source.charAt(current + 1)
+        return source.charAt(current + 1);
     }
 
     private  boolean isDigit(char c) {

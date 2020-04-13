@@ -33,7 +33,7 @@ public class Kurisu {
         BufferedReader reader = new BufferedReader(input);
 
         for (;;) {
-            System.out.print("> ");
+            System.out.print("~> ");
             run(reader.readLine());
             hadError = false;
         }
